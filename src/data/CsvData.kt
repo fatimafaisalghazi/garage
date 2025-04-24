@@ -8,6 +8,7 @@ import data.Driver
 import logic.DriversRepo
 import java.io.File
 
+
 class csvData(private val  csvfile:File ):DriversRepo {
 
     override fun getAllDriverInfo(): List<Driver> {
@@ -18,16 +19,5 @@ class csvData(private val  csvfile:File ):DriversRepo {
         }
         return allDriver
     }
-    private fun parsOneLine (line:String):Driver{
-        val DrtiverInfo= line.split(",")
 
-        return Driver(
-            DriverName = DrtiverInfo[NAME],
-            DriveAge = DrtiverInfo[AGE].toIntOrNull(),
-            Governonate = DrtiverInfo[GOVERNOTATE],
-            Gender = DrtiverInfo[GENDER],
-            TypeOfCar =DrtiverInfo[TYPEOFCAR],
-            DriveID = DrtiverInfo[ID].toIntOrNull()
-        )
-    }
 }
