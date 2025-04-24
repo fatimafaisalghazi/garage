@@ -6,10 +6,10 @@ class csvData(private val  CsvfileReader: csvFileReader,
               private val driverParser: csvParser
 ):DriversRepo {
 
-    override fun getAllDriverInfo(): List<Driver> {
-        val allDriver:MutableList<Driver> = mutableListOf()
+    override fun getAllDriverInfo(): List<data.Driver> {
+        val allDriver:MutableList<data.Driver> = mutableListOf()
         CsvfileReader.readLinesFromFile().forEach{lineOfCsv ->
-             val parsDriver =  driverParser.parsOneLine(lineOfCsv)
+             val parsDriver :data.Driver=  driverParser.parsOneLine(lineOfCsv)
             allDriver.add(parsDriver)
         }
         return allDriver

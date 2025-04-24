@@ -9,10 +9,10 @@ import data.DriverData.ColumnIndex.NAME
 import data.DriverData.ColumnIndex.TYPEOFCAR
 
 class csvParser {
-     fun parsOneLine (line:String): Driver {
+     fun parsOneLine (line:String): data.Driver {
         val DrtiverInfo= line.split(",")
 
-        return Driver(
+        return data.Driver(
             DriverName = DrtiverInfo[NAME],
             DriveAge = DrtiverInfo[AGE].toIntOrNull(),
             Governonate = DrtiverInfo[GOVERNOTATE],
