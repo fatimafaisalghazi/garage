@@ -8,7 +8,7 @@ import data.ColumnIndex.NAME
 import data.ColumnIndex.TYPEOFCAR
 
 class csvParser {
-    private fun parsOneLine (line:String):Driver{
+     fun parsOneLine (line:String):Driver{
         val DrtiverInfo= line.split(",")
 
         return Driver(
