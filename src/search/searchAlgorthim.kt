@@ -1,6 +1,6 @@
 package search
 
-import data.Driver
+import data.DriverData.Driver
 
 interface searchAlgorthim {
     fun searchByGovernorate(query: String): List<Driver>
