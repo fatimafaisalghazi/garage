@@ -1,6 +1,7 @@
 package UTIL
 
 import data.DriverData.ColumnIndex
+import search.searchAlgorthim
 import java.io.File
 
 
@@ -27,6 +28,6 @@ fun distance(){
         val distanceInfo =distanceInformation.split(",")
         println(distanceInfo[data.DistanceData.ColumnIndex.Governorate])
         println(distanceInfo[data.DistanceData.ColumnIndex.Districtval])
-        println(distanceInfo[data.DistanceData.ColumnIndex.DistanceFromBasra])
+        println(distanceInfo[data.DistanceData.ColumnIndex.DistanceFromBasra].toIntOrNull())
     }
 }
