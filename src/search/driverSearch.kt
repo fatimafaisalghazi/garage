@@ -1,7 +1,7 @@
 package search
 import data.DriverData.Driver
 
-class DriverSearcher(
+open class DriverSearcher(
     private val drivers: List<Driver>,
     private val corrector: FuzzyCorrection
     ): searchAlgorthim{
