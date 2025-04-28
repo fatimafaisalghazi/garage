@@ -6,7 +6,7 @@ class PriceCalculater(private val distanceCalculator: DistanceCalculator) {
     val name = readFromUser().userinput()
     fun CalculatePrice():Int?{
         val distance= distanceCalculator.getDistanceByDistrict(name)
-          val price=pricePer_KG*(initPrice + distance)
+          val price=pricePer_KG*(initPrice + distance!!)
         return price
     }
     companion object{
