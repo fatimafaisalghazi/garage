@@ -1,11 +1,12 @@
 package logic.calculate
 
 import UTIL.distance
+import data.DistanceData.Distance
 import data.DistanceData.DistanceFromBasra
 
-class CalculateDistance(distanceFromeBasra: DistanceFromBasra) {
-    fun GetPriceByDicitance(){
+interface CalculateDistance {
+    fun GetDistance(distanceFromBasra: Distance)
 
-    }
+
 
 }

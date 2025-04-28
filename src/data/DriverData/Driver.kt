@@ -6,7 +6,7 @@ data class Driver(
     val DriveAge: Int?,
     val Governonate:String,
     val Gender:String,
-    val TypeOfCar:TypeOfCar,
+    val TypeOfCar:String,
     val DriveID:Int?,
 
     )

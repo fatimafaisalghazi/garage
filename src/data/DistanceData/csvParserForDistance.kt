@@ -10,10 +10,7 @@ class csvParserForDistance {
         return Distance(
             Governorate =DistanceInfo[Governorate],
             Districtval = DistanceInfo[Districtval],
-            DistanceFromBasra = DistanceInfo[DistanceFromBasra]
-                .replace("?", "")
-                .trim()
-                .toIntOrNull()
+            DIstanceFromBasra = DistanceInfo[DistanceFromBasra].toIntOrNull()
 
         )
     }
