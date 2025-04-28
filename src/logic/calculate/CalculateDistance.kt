@@ -5,7 +5,7 @@ import data.DistanceData.Distance
 import data.DistanceData.DistanceFromBasra
 
 interface CalculateDistance {
-    fun GetDistance(distanceFromBasra: Distance)
+    fun GetDistance(districtName: String?): Int?
 
 
 

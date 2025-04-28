@@ -7,14 +7,16 @@ import java.io.File
 
 
 // هذا الكلاس هو المسؤول عن حساب المسافات
-class DistanceCalculator(private val districts: List<DistanceRepo>) {
+class DistanceCalculator(private val districts: List<DistanceRepo>):CalculateDistance {
     // هنا نستخدم getAllGovernorateInfo
     val distancerepo = districts.flatMap { it.getAllGovernorateInfo() }
 
-    fun getDistanceByDistrict(districtName: String?): Int? {
+   override fun GetDistance(districtName: String?): Int? {
         // بحث داخل القائمة عن المنطقة بالاسم
         return distancerepo.find { it.Districtval.equals(districtName, ignoreCase = true) }?.DIstanceFromBasra
     }
+
+
 }
 
 
@@ -37,7 +39,7 @@ fun main() {
     val name = readLine()
 
     // حساب المسافة وعرض النتيجة
-    val distance = distanceCalculator.getDistanceByDistrict(name)
+    val distance = distanceCalculator.GetDistance(name)
     if (distance != null) {
         println("The distance from Basra to $name is $distance km.")
     } else {
