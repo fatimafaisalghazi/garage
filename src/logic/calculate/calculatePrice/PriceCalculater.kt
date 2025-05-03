@@ -1,19 +1,17 @@
 package logic.calculate
 
-import preasentation.readFromUser
+class PriceCalculator(
+    private val distanceCalculator: DistanceCalculator
+) {
+    fun calculatePrice(destinationName: String): Int {
+        val distance = distanceCalculator.GetDistance(destinationName)
+            ?: throw IllegalArgumentException("Distance for $destinationName not found.")
 
-class PriceCalculater(private val distanceCalculator: DistanceCalculator) {
-    val name = readFromUser().userinput()
-    fun CalculatePrice():Int {
-        val distance= distanceCalculator.getDistanceByDistrict(name)
-          val price=PRICE_PER_KG*(INITIAL_PRICE + distance!!)
-        return price
-    }
-    companion object{
-        const val PRICE_PER_KG= 10000
-        const val INITIAL_PRICE=5000
-
+        return INITIAL_PRICE + (distance * PRICE_PER_KM)
     }
 
+    companion object {
+        private const val PRICE_PER_KM = 1000  // price per kilometer
+        private const val INITIAL_PRICE = 5000 // fixed base price
+    }
 }
-
