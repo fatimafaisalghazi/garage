@@ -1,6 +1,6 @@
 package logic
 
-import data.Driver
+import data.DriverData.Driver
 
 interface DriversRepo {
     fun getAllDriverInfo():List<Driver>

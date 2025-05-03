@@ -1,4 +1,4 @@
-package data
+package data.DriverData
 
 //blueprint
 data class Driver(

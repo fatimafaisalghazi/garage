@@ -1,6 +1,7 @@
 package UTIL
 
 import data.DriverData.ColumnIndex
+import search.searchAlgorthim
 import java.io.File
 
 
@@ -21,3 +22,12 @@ import java.io.File
             println(" cant access thes files ")
         }
     }
+fun distance(){
+    val distanceFile= File("distance.csv")
+    distanceFile.readLines().forEach(){distanceInformation ->
+        val distanceInfo =distanceInformation.split(",")
+        println(distanceInfo[data.DistanceData.ColumnIndex.Governorate])
+        println(distanceInfo[data.DistanceData.ColumnIndex.Districtval])
+        println(distanceInfo[data.DistanceData.ColumnIndex.DistanceFromBasra].toIntOrNull())
+    }
+}

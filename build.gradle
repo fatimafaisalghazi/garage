@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'org.openjfx:javafx-controls:24.0.1'
+    implementation 'org.openjfx:javafx-fxml:24.0.1'
+}
+
+application {
+    mainClass = 'language.LocalizationManagerKt' // ← غيّرها إذا اسم الـ main class يختلف
+}
+
+run {
+    jvmArgs = ['--add-modules', 'javafx.controls,javafx.fxml']
+}
