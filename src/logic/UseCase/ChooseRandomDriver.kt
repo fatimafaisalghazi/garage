@@ -1,4 +1,4 @@
-package UseCase
+package logic.UseCase
 
 
 import data.DriverData.Driver
@@ -6,7 +6,7 @@ import search.DriverSearcher
 import search.FuzzyCorrection
 
 
-class chooseRandomDriver(drivers: List<Driver>, corrector: FuzzyCorrection) : DriverSearcher(drivers, corrector) {
+class ChooseRandomDriver(drivers: List<Driver>, corrector: FuzzyCorrection) : DriverSearcher(drivers, corrector) {
 
      fun chooseRandomDriverFromGovernorate(governorate: String): Driver {
 

@@ -1,4 +1,4 @@
-package search
+package logic.UseCase
 
 class SearchDriversyGoveronateName {
 }
