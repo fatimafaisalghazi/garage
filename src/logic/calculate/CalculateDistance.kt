@@ -2,6 +2,6 @@ package logic.calculate
 
 
 interface CalculateDistance {
-    fun GetDistance(districtName: String?): Int?
+    fun GetDistance(districtName: String?, governonate: String): Int?
 
 }
