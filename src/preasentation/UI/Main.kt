@@ -1,26 +1,26 @@
 package presentation.gui.UI
 
+import data.DistanceData.csvFilereaderForDistance
+import data.DistanceData.csvParserForDistance
+import data.DriverData.csvFileReader
+import data.DriverData.csvParser
+import data.PassengerData.PassengerRepositoryImpl
+import data.Repository.BookingRepositoryImpl
+import data.Repository.DriverRepositoryImpl
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.VBox
+import javafx.scene.text.Font
 import javafx.stage.Stage
+import logic.calculate.PriceCalculator
 import logic.controller.PassengerRegistrationController
 import logic.usecase.BookTripUseCase
 import logic.usecase.RegisterPassengerUseCase
-import data.DriverData.csvFileReader
-import data.DriverData.csvParser
-import data.DistanceData.csvFilereaderForDistance
-import data.DistanceData.csvParserForDistance
-import data.Repository.BookingRepositoryImpl
-import data.Repository.DriverRepositoryImpl
-import data.PassengerData.PassengerRepositoryImpl
-import logic.calculate.PriceCalculator
-import presentation.gui.logic.calculate.CalculateDistance.DistanceCalculator
 import presentation.gui.data.Repository.DistanceRepositoryImpl
+import presentation.gui.logic.calculate.CalculateDistance.DistanceCalculator
 import java.io.File
-import javafx.scene.text.Font
 
 class MainApp : Application() {
     private lateinit var controller: PassengerRegistrationController
@@ -65,17 +65,33 @@ class MainApp : Application() {
 
         // تحديث قائمة المناطق حسب المحافظة
         governorateField.setOnKeyReleased {
-            val governorate = governorateField.text.trim()
-            val districts = controller.getDistrictSuggestion(governorate)
-            districtCombo.items.setAll(districts)
+            val governorateInput = governorateField.text.trim()
+            val correctedGovernorate = controller.getCorrectedGovernorate(governorateInput)
+
+            if (correctedGovernorate != null) {
+                val districts = controller.getDistrictsByGovernorate(correctedGovernorate)
+                districtCombo.items.setAll(districts)
+            }
         }
+
 
         // عند اختيار الحي، عرض السواق لنفس المحافظة
         districtCombo.setOnAction {
-            val governorate = governorateField.text.trim()
-            val drivers = controller.searchDriversByGovernorate(governorate)
-            driversCombo.items.setAll(drivers.map { "${it.DriverName} | ${it.TypeOfCar}" })
+            val governorateInput = governorateField.text.trim()
+            val correctedGovernorate = controller.getDistrictSuggestion(governorateInput)
+
+            if (correctedGovernorate != null) {
+                val drivers = controller.searchDriversByGovernorate(correctedGovernorate)
+                if (drivers.isEmpty()) {
+                    showAlert("No Drivers", "No drivers found in $correctedGovernorate")
+                } else {
+                    driversCombo.items.setAll(drivers.map {
+                        "${it.DriverName} | ${it.TypeOfCar} | Age: ${it.DriveAge}"
+                    })
+                }
+            }
         }
+
 
         val bookButton = Button("Book Ride")
         bookButton.setOnAction {
@@ -108,7 +124,8 @@ class MainApp : Application() {
             }
         }
 
-        val layout = VBox(10.0,
+        val layout = VBox(
+            10.0,
             Label("Passenger Registration").apply { font = Font.font(18.0) },
             nameField,
             phoneField,
