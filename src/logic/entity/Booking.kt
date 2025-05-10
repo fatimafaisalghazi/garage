@@ -1,7 +1,7 @@
 package logic.entity
 
 import data.DriverData.Driver
-import java.util.*
+import java.util.Date
 
 data class Booking(
     val passenger: Passenger,
