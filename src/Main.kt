@@ -97,54 +97,59 @@ class MainApp : Application() {
         val btnSubmit = Button("Next")
         val lblError = Label()
 
-        btnSubmit.setOnAction {
-            fun showNextStep(name: String, phone: String, correctedGov: String) {
-                val passenger = Passenger(name = name, phoneNumber = phone, governorate = correctedGov, district = "")
-                showSearchScene(passenger) // الانتقال للخطوة التالية
-            }
-            try {
-                val phone = phoneField.text
-                val name = nameField.text
-                val gov = govField.text
-
-                if (!phone.matches(Regex("^\\d{11}$"))) {
-                    lblError.text = "Phone number must be exactly 11 digits with no symbols or letters."
-                    return@setOnAction
-                }
-
-                val governorates = distanceRepo.getAllGovernorateInfo().map { it.Governorate }.distinct()
-                val fc = FuzzyCorrection(governorates)
-                val correctedGov = fc.correct(gov)
-
-                if (correctedGov != gov) {
-                    lblError.text = "Did you mean \"$correctedGov\"?"
-                    // عرض زر "نعم هذا صحيح"
-                    val btnConfirm = Button("Yes, that's correct")
-                    btnConfirm.setOnAction {
-                        govField.text = correctedGov // تحديث الحقل بالمحافظة المصححة
-                        showNextStep(name, phone, correctedGov)
-                    }
-                    val layout = VBox(10.0, btnConfirm) // عرض زر التأكيد
-                    stage.scene = Scene(layout, 300.0, 100.0)
-                    return@setOnAction
-                }
-
-                if (correctedGov !in governorates) {
-                    lblError.text = "Governorate \"$correctedGov\" not found in our data. We don't deliver there."
-                    return@setOnAction
-                }
-
-                showNextStep(name, phone, correctedGov)
-
-            } catch (e: Exception) {
-                lblError.text = e.message ?: "An unexpected error occurred during registration."
-            }
+        val layout = VBox(10.0, nameField, phoneField, govField, btnSubmit, lblError).apply {
+            padding = Insets(20.0)
         }
 
+        val governorates = distanceRepo.getAllGovernorateInfo().map { it.Governorate }.distinct()
+        val fc = FuzzyCorrection(governorates)
+        btnSubmit.setOnAction {
+            val name = nameField.text.trim()
+            val phone = phoneField.text.trim()
+            val govInput = govField.text.trim()
 
+            if (name.isEmpty() || phone.isEmpty() || govInput.isEmpty()) {
+                lblError.text = "All fields are required."
+                return@setOnAction
+            }
 
+            if (!phone.matches(Regex("^\\d{11}$"))) {
+                lblError.text = "Phone number must be exactly 11 digits."
+                return@setOnAction
+            }
 
+            val correctedGov = fc.correct(govInput)
+
+            val isGovValid = govInput in governorates || correctedGov in governorates
+
+            if (!isGovValid) {
+                lblError.text = "Governorate \"$govInput\" not found in available governorates."
+                return@setOnAction
+            }
+
+            // عرض اقتراح إن وجد، لكن لا يمنع التقدم
+            if (correctedGov != govInput && correctedGov in governorates) {
+                lblError.text = "Did you mean \"$correctedGov\"?"
+            } else {
+                lblError.text = ""
+            }
+
+            // نأخذ المحافظة المدخلة إن كانت صحيحة، وإلا نستخدم المقترحة
+            val finalGov = if (govInput in governorates) govInput else correctedGov
+
+            val passenger = Passenger(name = name, phoneNumber = phone, governorate = finalGov, district = "")
+            showSearchScene(passenger)
+        }
     }
+
+
+
+    private fun showNextStep(name: String, phone: String, correctedGov: String) {
+        val passenger = Passenger(name = name, phoneNumber = phone, governorate = correctedGov, district = "")
+        showSearchScene(passenger)
+    }
+
+
     private fun showSearchScene(passenger: Passenger) {
         val inputField = TextField().apply { promptText = "Enter district" }
         val btnSearch = Button("Search Drivers")
@@ -163,7 +168,7 @@ class MainApp : Application() {
             ""
         }
 
-// ✅ فقط نبحث داخل المحافظة التي سجلها الراكب
+        // فقط نبحث داخل المحافظة التي سجلها الراكب
         val districtsInGovernorate = distanceRepo
             .getAllGovernorateInfo()
             .filter { it.Governorate == passenger.governorate }
@@ -175,7 +180,7 @@ class MainApp : Application() {
             return
         }
 
-// ✅ نبحث عن السواق الذين في نفس المحافظة
+        // نبحث عن السواق الذين في نفس المحافظة
         val searcher = DriverSearcher(driverRepo.getAllDriverInfo(), fc)
         matchedDrivers = searcher.searchByGovernorate(passenger.governorate)
 
@@ -188,9 +193,6 @@ class MainApp : Application() {
         if (matchedDrivers.isEmpty()) {
             lblError.text = "No drivers found in governorate: ${passenger.governorate}"
         }
-
-
-
 
         btnBook.setOnAction {
             val selectedIndex = listView.selectionModel.selectedIndex
