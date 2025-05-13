@@ -160,7 +160,7 @@ class MainApp : Application() {
                 return@setOnAction
             }
 
-            showDriverSelectionUI(stage, passenger, correctedGovernorate, district)
+            showDriverSelectionUI(stage, passenger, correctedGovernorate)
         }
 
         val layout = VBox(12.0, Label("Passenger Registration").apply {
@@ -175,7 +175,7 @@ class MainApp : Application() {
         stage.show()
     }
 
-    private fun showDriverSelectionUI(stage: Stage, passenger: Passenger, governorate: String, district: String) {
+    private fun showDriverSelectionUI(stage: Stage, passenger: Passenger, governorate: String) {
         val drivers = controller.searchDriversByGovernorate(governorate)
         if (drivers.isEmpty()) {
             showAlert("No Drivers", "No drivers found in $governorate.")
@@ -196,7 +196,7 @@ class MainApp : Application() {
                     return@setOnAction
                 }
                 val selectedDriver = drivers[selectedIndex]
-                val result = controller.bookSelectedDriver(passenger, selectedDriver, district)
+                val result = controller.bookSelectedDriver(passenger, selectedDriver, "N/A")
                 if (result.isSuccess) {
                     val booking = result.getOrNull()
                     showAlert("Booking Confirmed", "Trip booked! Price: ${booking?.price} IQD")

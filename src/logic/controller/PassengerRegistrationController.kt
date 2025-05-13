@@ -1,6 +1,8 @@
 package logic.controller
 
 import data.DriverData.Driver
+import javafx.scene.Scene
+import javafx.stage.Stage
 import logic.Repository.DistanceRepository
 import logic.Repository.DriverRepository
 import logic.calculate.calculatePrice.PriceCalculator
@@ -75,7 +77,7 @@ class PassengerRegistrationController(
         val updatedPassenger = passenger.copy(district = districtInput)
 
         return try {
-            val booking = bookTripUseCase.execute(updatedPassenger, driver,districtInput)
+            val booking = bookTripUseCase.execute(updatedPassenger, driver)
             Result.success(booking)
         } catch (e: Exception) {
             Result.failure(e)
@@ -91,6 +93,7 @@ class PassengerRegistrationController(
                 .map { it.Districtval }
                 .distinct()
         }
+
 
     }
 

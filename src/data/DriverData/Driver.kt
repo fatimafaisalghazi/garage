@@ -9,8 +9,4 @@ data class Driver(
     val TypeOfCar:String,
     val DriveID:Int?,
 
-    ){
-override fun toString(): String {
-    return "$DriverName - $TypeOfCar"
-}}
-
+    )
