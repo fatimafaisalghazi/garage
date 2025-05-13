@@ -10,7 +10,7 @@ class BookTripUseCase(
     private val bookingRepo: BookingRepository,
     private val priceCalculator: PriceCalculator
 ) {
-    fun execute(passenger: Passenger, driver: Driver,correctedDistrict:String): Booking {
+    fun execute(passenger: Passenger, driver: Driver): Booking {
         val price = priceCalculator.calculatePrice(
             passengerDistrict = passenger.district,
             driverGovernorate = driver.Governonate,

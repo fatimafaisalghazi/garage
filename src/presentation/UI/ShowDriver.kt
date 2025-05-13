@@ -1,64 +1,96 @@
-package presentation.UI
+package ui.view
 
 import data.DriverData.Driver
-import javafx.collections.FXCollections
 import javafx.geometry.Insets
-import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.layout.VBox
-import javafx.stage.Stage
-import logic.calculate.calculatePrice.PriceCalculator
+import javafx.scene.layout.*
+import logic.controller.PassengerRegistrationController
+import logic.entity.Passenger
 
-class ChooseDriverView(
-    private val drivers: List<Driver>,
-    private val passengerGovernorate: String,
-    private val passengerDistrict: String
-) {
+class DriverSelectionView(
+    private val passenger: Passenger,
+    private val controller: PassengerRegistrationController
+) : VBox() {
 
-     private lateinit var  priceCalculator : PriceCalculator
+    private val driverComboBox = ComboBox<Driver>()
+    private val districtComboBox = ComboBox<String>()
+    private val priceLabel = Label("Price: -")
+    private val bookButton = Button("Book Driver")
+    private val messageLabel = Label()
 
-    fun show() {
-        val stage = Stage()
-        stage.title = "Choose a Driver"
+    init {
+        spacing = 15.0
+        padding = Insets(20.0)
 
-        val comboBox = ComboBox<Driver>()
-        comboBox.items = FXCollections.observableArrayList(drivers)
-        comboBox.promptText = "Select a driver"
+        val titleLabel = Label("Select a driver for ${passenger.name} from ${passenger.governorate}")
+        titleLabel.style = "-fx-font-size: 16px; -fx-font-weight: bold"
 
-        val priceLabel = Label("Price: ")
-        val confirmButton = Button("Confirm Booking")
-        confirmButton.isDisable = true
+        driverComboBox.promptText = "Choose Driver"
+        districtComboBox.promptText = "Choose District"
 
-        comboBox.setOnAction {
-            val selectedDriver = comboBox.value
-            if (selectedDriver != null) {
-                val price = priceCalculator.calculatePrice(
-                    passengerDistrict = passengerDistrict,
-                    driverGovernorate = selectedDriver.Governonate,
-                    carType = selectedDriver.TypeOfCar
-                )
-                priceLabel.text = "Price: \$${price}"
-                confirmButton.isDisable = false
-            }
+        val drivers = passenger.governorate?.let { controller.searchDriversByGovernorate(it) }
+        if (drivers != null) {
+            driverComboBox.items.addAll(drivers)
         }
 
-        confirmButton.setOnAction {
-            val selectedDriver = comboBox.value
-            if (selectedDriver != null) {
-                Alert(Alert.AlertType.INFORMATION).apply {
-                    title = "Booking Confirmed"
-                    headerText = null
-                    contentText = "Booking confirmed with ${selectedDriver.DriverName}."
-                    showAndWait()
-                }
-                stage.close()
-            }
+        val districts = passenger.governorate?.let { controller.getDistrictsByGovernorate(it) }
+        if (districts != null) {
+            districtComboBox.items.addAll(districts)
         }
 
-        val vbox = VBox(10.0, comboBox, priceLabel, confirmButton)
-        vbox.padding = Insets(20.0)
+        driverComboBox.setOnAction {
+            updatePrice()
+        }
 
-        stage.scene = Scene(vbox, 400.0, 200.0)
-        stage.show()
+        districtComboBox.setOnAction {
+            updatePrice()
+        }
+
+        bookButton.setOnAction {
+            bookSelectedDriver()
+        }
+
+        children.addAll(
+            titleLabel,
+            HBox(10.0, Label("Driver:"), driverComboBox),
+            HBox(10.0, Label("District:"), districtComboBox),
+            priceLabel,
+            bookButton,
+            messageLabel
+        )
+    }
+
+    private fun updatePrice() {
+        val selectedDriver = driverComboBox.value
+        val selectedDistrict = districtComboBox.value
+
+        if (selectedDriver != null && !selectedDistrict.isNullOrBlank()) {
+            try {
+                val price = controller.bookSelectedDriver(passenger, selectedDriver, selectedDistrict).getOrThrow().price
+                priceLabel.text = "Price: $price IQD"
+                messageLabel.text = ""
+            } catch (e: Exception) {
+                priceLabel.text = "Price: -"
+                messageLabel.text = "Error calculating price: ${e.message}"
+            }
+        }
+    }
+
+    private fun bookSelectedDriver() {
+        val selectedDriver = driverComboBox.value
+        val selectedDistrict = districtComboBox.value
+
+        if (selectedDriver == null || selectedDistrict.isNullOrBlank()) {
+            messageLabel.text = "Please select both driver and district."
+            return
+        }
+
+        val result = controller.bookSelectedDriver(passenger, selectedDriver, selectedDistrict)
+        if (result.isSuccess) {
+            val booking = result.getOrNull()
+            messageLabel.text = "Booking successful! Booking Price: ${booking?.price} IQD"
+        } else {
+            messageLabel.text = "Booking failed: ${result.exceptionOrNull()?.message}"
+        }
     }
 }

@@ -33,7 +33,7 @@ class CsvBookingRepository(private val file: File) : BookingRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getBookingsForDriver(driverId: Int): List<Booking> {
+     fun getBookingsForDriver(driverId: Int): List<Booking> {
         return file.readLines()
             .mapNotNull { line ->
                 val parts = line.split(",")

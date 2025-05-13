@@ -7,5 +7,4 @@ class csvFileReader(private val csvFile:File) : DataFromFiles {
    override fun readLinesFromFile():List<String>{
         return csvFile.readLines()
     }
-
 }
