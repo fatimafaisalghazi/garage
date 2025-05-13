@@ -25,6 +25,7 @@ class PassengerRegistrationController(
     private val fuzzyGov = FuzzyCorrection(governorates)
     private val fuzzyDistrict = FuzzyCorrection(districts)
 
+    // تعديل الدالة في PassengerRegistrationController لتصحيح المحافظة
     fun validateAndCorrectPassengerInput(
         name: String,
         phone: String,
@@ -38,6 +39,7 @@ class PassengerRegistrationController(
             return null to "Phone number must be exactly 11 digits."
         }
 
+        // تصحيح المحافظة
         val correctedGov = fuzzyGov.correct(governorateInput)
         val isValidGov = correctedGov in governorates
 
@@ -48,6 +50,14 @@ class PassengerRegistrationController(
         val passenger = Passenger(name = name, phoneNumber = phone, governorate = correctedGov, district = "")
         registerPassengerUseCase.register(passenger)
         return passenger to if (correctedGov != governorateInput) "Did you mean \"$correctedGov\"?" else null
+    }
+
+    fun getDriversByGovernorate(governorate: String): List<Driver> {
+        // استخدام المحافظة المصححة
+        val correctedGovernorate = fuzzyGov.correct(governorate)
+        return driverRepo.getAllDrivers().filter {
+            it.Governonate.equals(correctedGovernorate, ignoreCase = true)
+        }
     }
 
     fun getDistrictSuggestion(input: String): String? {
@@ -92,14 +102,8 @@ class PassengerRegistrationController(
                 .filter { it.Governorate.equals(governorate, ignoreCase = true) }
                 .map { it.Districtval }
                 .distinct()
-        }
-    fun getDriversByGovernorate(governorate: String): List<Driver> {
-        return driverRepo.getAllDrivers().filter {
-            it.Governonate.equals(governorate, ignoreCase = true)
-        }
-    }
 
 
 
-}
+}}
 
