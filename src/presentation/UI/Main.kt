@@ -126,8 +126,10 @@ class MainApp : Application() {
             }
 
             governorateField.setOnKeyReleased {
-                val correctedGovernorate = governorateField.text.trim()
-                if (correctedGovernorate.isNotEmpty()) {
+                val inputGov = governorateField.text.trim()
+                val correctedGovernorate = controller.getCorrectedGovernorate(inputGov)
+
+                if (!correctedGovernorate.isNullOrBlank()) {
                     val availableDistricts = controller.getDistrictsByGovernorate(correctedGovernorate)
                     districtCombo.items.setAll(availableDistricts)
                 } else {
@@ -135,12 +137,14 @@ class MainApp : Application() {
                 }
             }
 
+
             nextButton.setOnAction {
                 val name = nameField.text.trim()
                 val phone = phoneField.text.trim()
                 val governorate = governorateField.text.trim()
                 val district = districtCombo.selectionModel.selectedItem
 
+                // تصحيح المحافظة هنا
                 val (passenger, error) = controller.validateAndCorrectPassengerInput(name, phone, governorate)
                 if (passenger == null) {
                     showAlert("Validation Error", error ?: "Unknown error.")
@@ -152,9 +156,13 @@ class MainApp : Application() {
                     return@setOnAction
                 }
 
-                // Now that we have a valid passenger and district, show the driver selection
-                showDriverSelectionUI(stage, passenger, governorate)
+                // الآن بعد أن تم تصحيح المحافظة، يمكننا عرض واجهة اختيار السائق
+                passenger.governorate?.let { it1 ->
+                    showDriverSelectionUI(stage, passenger, it1)  // استخدام المحافظة المصححة هنا
+                }
             }
+
+
 
             val layout = VBox(12.0, Label("Passenger Registration").apply {
                 font = Font.font("Arial", 20.0); style = "-fx-text-fill: #34495e;"
@@ -167,44 +175,44 @@ class MainApp : Application() {
             stage.title = "Passenger Booking"
             stage.show()
         }
-
-        private fun showDriverSelectionUI(stage: Stage, passenger: Passenger, governorate: String) {
-            val drivers = controller.getDriversByGovernorate(governorate)
-            if (drivers.isEmpty()) {
-                showAlert("No Drivers", "No drivers found in $governorate.")
-                return
-            }
-
-            val driversCombo = ComboBox<String>().apply {
-                items.setAll(drivers.map { "${it.DriverName} | ${it.TypeOfCar} | Age: ${it.DriveAge}" })
-                prefWidth = 400.0
-            }
-
-            val bookButton = Button("Book Ride").apply {
-                style = "-fx-background-color: #27ae60; -fx-text-fill: white;"
-                setOnAction {
-                    val selectedIndex = driversCombo.selectionModel.selectedIndex
-                    if (selectedIndex == -1) {
-                        showAlert("Error", "Please select a driver.")
-                        return@setOnAction
-                    }
-                    val selectedDriver = drivers[selectedIndex]
-                    showAlert("Booking Confirmed", "Booking successful with driver: ${selectedDriver.DriverName}")
-                }
-            }
-
-            val layout = VBox(15.0, Label("Select a Driver").apply {
-                font = Font.font("Arial", 18.0)
-                style = "-fx-text-fill: #2c3e50;"
-            }, driversCombo, bookButton).apply {
-                padding = Insets(20.0)
-                alignment = Pos.CENTER
-            }
-
-            stage.scene = Scene(layout, 450.0, 300.0)
-            stage.title = "Choose Driver"
-            stage.show()
+    private fun showDriverSelectionUI(stage: Stage, passenger: Passenger, governorate: String) {
+        val drivers = controller.getDriversByGovernorate(governorate)  // استخدام المحافظة المصححة هنا
+        if (drivers.isEmpty()) {
+            showAlert("No Drivers", "No drivers found in $governorate.")
+            return
         }
+
+        val driversCombo = ComboBox<String>().apply {
+            items.setAll(drivers.map { "${it.DriverName} | ${it.TypeOfCar} | Age: ${it.DriveAge}" })
+            prefWidth = 400.0
+        }
+
+        val bookButton = Button("Book Ride").apply {
+            style = "-fx-background-color: #27ae60; -fx-text-fill: white;"
+            setOnAction {
+                val selectedIndex = driversCombo.selectionModel.selectedIndex
+                if (selectedIndex == -1) {
+                    showAlert("Error", "Please select a driver.")
+                    return@setOnAction
+                }
+                val selectedDriver = drivers[selectedIndex]
+                showAlert("Booking Confirmed", "Booking successful with driver: ${selectedDriver.DriverName}")
+            }
+        }
+
+        val layout = VBox(15.0, Label("Select a Driver").apply {
+            font = Font.font("Arial", 18.0)
+            style = "-fx-text-fill: #2c3e50;"
+        }, driversCombo, bookButton).apply {
+            padding = Insets(20.0)
+            alignment = Pos.CENTER
+        }
+
+        stage.scene = Scene(layout, 450.0, 300.0)
+        stage.title = "Choose Driver"
+        stage.show()
+    }
+
 
         private fun showAlert(title: String, message: String) {
             val alert = Alert(Alert.AlertType.INFORMATION)
