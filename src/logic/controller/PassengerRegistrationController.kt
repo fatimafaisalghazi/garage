@@ -93,7 +93,13 @@ class PassengerRegistrationController(
                 .map { it.Districtval }
                 .distinct()
         }
-
-
+    fun getDriversByGovernorate(governorate: String): List<Driver> {
+        return driverRepo.getAllDrivers().filter {
+            it.Governonate.equals(governorate, ignoreCase = true)
+        }
     }
+
+
+
+}
 
