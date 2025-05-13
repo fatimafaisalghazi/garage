@@ -1,16 +1,16 @@
-package logic.usecase
+package logic.UseCase
 
 import data.DriverData.Driver
-import logic.calculate.PriceCalculator
+import logic.calculate.calculatePrice.PriceCalculator
 import logic.entity.Booking
 import logic.entity.Passenger
-import logic.repository.BookingRepository
+import logic.Repository.BookingRepository
 
 class BookTripUseCase(
     private val bookingRepo: BookingRepository,
     private val priceCalculator: PriceCalculator
 ) {
-    fun execute(passenger: Passenger, driver: Driver): Booking {
+    fun execute(passenger: Passenger, driver: Driver,correctedDistrict:String): Booking {
         val price = priceCalculator.calculatePrice(
             passengerDistrict = passenger.district,
             driverGovernorate = driver.Governonate,

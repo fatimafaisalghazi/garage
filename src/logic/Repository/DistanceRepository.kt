@@ -1,7 +1,7 @@
-package logic
+package logic.Repository
 
 import data.DistanceData.Distance
 
-interface DistanceRepo {
+interface DistanceRepository {
     fun getAllGovernorateInfo():List<Distance>
 }

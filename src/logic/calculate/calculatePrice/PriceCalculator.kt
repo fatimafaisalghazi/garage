@@ -1,4 +1,6 @@
-package logic.calculate
+package logic.calculate.calculatePrice
+
+import logic.calculate.CalculateDistance.DistanceCalculator
 
 class PriceCalculator(
     private val distanceCalculator: DistanceCalculator
@@ -19,11 +21,11 @@ class PriceCalculator(
         private const val INITIAL_PRICE = 5000
 
         private val carTypeMultipliers = mapOf(
-            "suv" to 1.5,
-            "sedan" to 1.2,
-            "truck" to 2.0,
-            "minivan" to 1.3,
-            "motorcycle" to 0.8
+            "Hyundai Elantra" to 1.5,
+            "Chevrolet Spark" to 1.2,
+            "Nissan Sunny" to 2.0,
+            "Toyota Corolla" to 1.3,
+            "Kia Bongo" to 0.8
         )
     }
 }

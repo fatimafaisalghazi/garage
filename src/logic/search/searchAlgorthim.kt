@@ -1,4 +1,4 @@
-package search
+package logic.search
 
 import data.DriverData.Driver
 

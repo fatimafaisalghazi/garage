@@ -1,8 +1,8 @@
-package logic.repository
+package logic.Repository
 
 import logic.entity.Booking
 
 interface BookingRepository {
     fun saveBooking(booking: Booking)
-    fun getBookingsForDriver(driverId: Int): List<Booking>
+    fun getAllBookings(): List<Booking>
 }

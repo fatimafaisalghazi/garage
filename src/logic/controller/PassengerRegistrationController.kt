@@ -1,13 +1,13 @@
 package logic.controller
 
 import data.DriverData.Driver
-import presentation.gui.logic.Repository.DistanceRepository
+import logic.Repository.DistanceRepository
 import logic.Repository.DriverRepository
-import logic.calculate.PriceCalculator
+import logic.calculate.calculatePrice.PriceCalculator
 import logic.entity.Passenger
 import logic.entity.Booking
-import logic.usecase.BookTripUseCase
-import logic.usecase.RegisterPassengerUseCase
+import logic.UseCase.BookTripUseCase
+import logic.UseCase.RegisterPassengerUseCase
 import logic.search.FuzzyCorrection
 import logic.search.DriverSearcher
 
@@ -23,7 +23,11 @@ class PassengerRegistrationController(
     private val fuzzyGov = FuzzyCorrection(governorates)
     private val fuzzyDistrict = FuzzyCorrection(districts)
 
-    fun validateAndCorrectPassengerInput(name: String, phone: String, governorateInput: String): Pair<Passenger?, String?> {
+    fun validateAndCorrectPassengerInput(
+        name: String,
+        phone: String,
+        governorateInput: String
+    ): Pair<Passenger?, String?> {
         if (name.isBlank() || phone.isBlank() || governorateInput.isBlank()) {
             return null to "All fields are required."
         }
@@ -49,16 +53,15 @@ class PassengerRegistrationController(
         return if (corrected != input) corrected else null
     }
 
-    fun isDistrictInGovernorate(district: String, governorate: String): Boolean {
+    fun isDistrictInGovernorate(district: String, governorate: String?): Boolean {
         return distanceRepo.getAllGovernorateInfo()
             .any { it.Governorate == governorate && it.Districtval == district }
     }
 
     fun searchDriversByGovernorate(governorate: String): List<Driver> {
-        val searcher = DriverSearcher(driverRepo.getAllDriverInfo(), fuzzyDistrict)
+        val searcher = DriverSearcher(driverRepo.getAllDrivers(), fuzzyDistrict)
         return searcher.searchByGovernorate(governorate)
     }
-
 
     fun bookSelectedDriver(passenger: Passenger, driver: Driver, districtInput: String): Result<Booking> {
         if (!isDistrictInGovernorate(districtInput, passenger.governorate)) {
@@ -72,10 +75,22 @@ class PassengerRegistrationController(
         val updatedPassenger = passenger.copy(district = districtInput)
 
         return try {
-            val booking = bookTripUseCase.execute(updatedPassenger, driver)
+            val booking = bookTripUseCase.execute(updatedPassenger, driver,districtInput)
             Result.success(booking)
         } catch (e: Exception) {
             Result.failure(e)
+        }}
+        fun getCorrectedGovernorate(input: String): String? {
+            val corrected = fuzzyGov.correct(input)
+            return if (corrected in governorates) corrected else null
         }
+
+        fun getDistrictsByGovernorate(governorate: String): List<String> {
+            return distanceRepo.getAllGovernorateInfo()
+                .filter { it.Governorate.equals(governorate, ignoreCase = true) }
+                .map { it.Districtval }
+                .distinct()
+        }
+
     }
-}
+

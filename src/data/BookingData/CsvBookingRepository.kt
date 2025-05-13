@@ -3,7 +3,7 @@ package data.BookingData
 import data.DriverData.Driver
 import logic.entity.Booking
 import logic.entity.Passenger
-import logic.repository.BookingRepository
+import logic.Repository.BookingRepository
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,6 +27,10 @@ class CsvBookingRepository(private val file: File) : BookingRepository {
         ).joinToString(",") + "\n"
 
         file.appendText(line)
+    }
+
+    override fun getAllBookings(): List<Booking> {
+        TODO("Not yet implemented")
     }
 
     override fun getBookingsForDriver(driverId: Int): List<Booking> {

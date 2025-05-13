@@ -1,9 +1,10 @@
-package logic.usecase
+package logic.UseCase
 
+import logic.Repository.PassengerRepository
 import logic.entity.Passenger
 
-class RegisterPassengerUseCase {
-    fun execute(name: String, phone: String, governorate: String, district: String): Passenger {
-        return Passenger(name, phone, governorate, district)
+class RegisterPassengerUseCase(private val passengerRepository: PassengerRepository) {
+    fun register(passenger: Passenger) {
+        passengerRepository.save(passenger)
     }
 }

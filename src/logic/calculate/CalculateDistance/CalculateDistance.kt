@@ -1,4 +1,4 @@
-package logic.calculate
+package logic.calculate.CalculateDistance
 
 
 interface CalculateDistance {
