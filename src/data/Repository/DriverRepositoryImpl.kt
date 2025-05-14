@@ -12,7 +12,7 @@ class DriverRepositoryImpl(
 
     override fun getAllDrivers(): List<Driver> {
         val allDriver: MutableList<Driver> = mutableListOf()
-        CsvfileReader.readLinesFromFile().forEach { lineOfCsv ->
+        csvFileReader.readLinesFromFile().forEach { lineOfCsv ->
             val parsDriver: Driver = driverParser.parsOneLine(lineOfCsv)
             allDriver.add(parsDriver)
         }
