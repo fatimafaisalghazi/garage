@@ -1,6 +1,7 @@
 package logic.calculate.calculatePrice
 
 import logic.calculate.CalculateDistance.DistanceCalculator
+import kotlin.math.round
 
 class PriceCalculator(
     private val distanceCalculator: DistanceCalculator
@@ -11,22 +12,21 @@ class PriceCalculator(
             ?: throw IllegalArgumentException("Distance from $passengerDistrict to $driverGovernorate not found.")
 
         val basePrice = INITIAL_PRICE + (distance * PRICE_PER_KM)
-        val carTypeMultiplier = carTypeMultipliers[carType.lowercase()] ?: 1.0 // default to no change
+        val carTypeMultiplier = carTypeMultipliers[carType.lowercase()] ?: 1.0
 
-        return (basePrice * carTypeMultiplier).toInt()
+        return round(basePrice * carTypeMultiplier).toInt()
     }
 
     companion object {
-        private const val PRICE_PER_KM = 1000
-        private const val INITIAL_PRICE = 5000
+        private const val PRICE_PER_KM = 0.05
+        private const val INITIAL_PRICE = 12
 
         private val carTypeMultipliers = mapOf(
-            "Hyundai Elantra" to 1.5,
-            "Chevrolet Spark" to 1.2,
-            "Nissan Sunny" to 2.0,
-            "Toyota Corolla" to 1.3,
-            "Kia Bongo" to 0.8
+            "hyundai elantra" to 1.2,
+            "chevrolet spark" to 1.0,
+            "nissan sunny" to 1.3,
+            "toyota corolla" to 1.1,
+            "kia bongo" to 0.9
         )
     }
 }
-

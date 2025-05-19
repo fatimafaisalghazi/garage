@@ -6,23 +6,23 @@ import data.DriverData.csvParser
 import logic.Repository.DriverRepository
 
 class DriverRepositoryImpl(
-    private val CsvfileReader: csvFileReader,
+    private val csvFileReader: csvFileReader,
     private val driverParser: csvParser
 ) : DriverRepository {
 
     override fun getAllDrivers(): List<Driver> {
-        val allDriver: MutableList<Driver> = mutableListOf()
+        val allDriverInfo: MutableList<Driver> = mutableListOf()
+
         csvFileReader.readLinesFromFile().forEach { lineOfCsv ->
             val parsDriver: Driver = driverParser.parsOneLine(lineOfCsv)
-            allDriver.add(parsDriver)
+            allDriverInfo.add(parsDriver)
         }
-        return allDriver
+        return allDriverInfo // معلومات السايق كلها المأخوذة من الفايل
     }
 
     override fun getDriverById(id: Int): Driver? {
         return getAllDrivers().find { it.DriveID == id }
     }
-
 
 }
 

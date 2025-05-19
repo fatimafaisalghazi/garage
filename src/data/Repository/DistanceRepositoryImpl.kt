@@ -19,7 +19,7 @@ class DistanceRepositoryImpl(
         return governorateInfo
     }
 
-    fun getDistrictsByGovernorate(governorate: String): List<String> {
+     override fun getDistrictsByGovernorate(governorate: String): List<String> {
         return governorateInfo
             .filter { it.Governorate.equals(governorate, ignoreCase = true) }
             .map { it.Districtval }

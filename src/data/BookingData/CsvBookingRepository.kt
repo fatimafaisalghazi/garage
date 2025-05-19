@@ -8,6 +8,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+//جان المفروض يستخدم علمود تسجيل السايق
+
 class CsvBookingRepository(private val file: File) : BookingRepository {
     private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 

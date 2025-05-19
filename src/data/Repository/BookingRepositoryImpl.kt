@@ -14,5 +14,4 @@ class BookingRepositoryImpl : BookingRepository {
     override fun getAllBookings(): List<Booking> {
         return bookings
     }
-
 }

@@ -11,8 +11,4 @@ class PassengerRepositoryImpl : PassengerRepository {
     }
 
     override fun getAll(): List<Passenger> = passengers
-
-    override fun findByPhone(phone: String): Passenger? {
-        return passengers.find { it.phoneNumber == phone }
-    }
 }
